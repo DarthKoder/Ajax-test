@@ -62,7 +62,7 @@ function writeToDocument(url) {
             // el.innerHTML += "<p>" + item.name + "</p>";
         });
 
-        el.innerHTML = `<table>${tableHeaders}${tableRows}</table>${pagination}`;
+        el.innerHTML = `<table>${tableHeaders}${tableRows}</table>${pagination}`.replace(/,/g, "");
         // document.getElementById("data").innerHTML = data.results; - cut and used in forEach loop.
     });
 }
