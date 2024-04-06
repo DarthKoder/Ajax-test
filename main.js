@@ -1,7 +1,5 @@
 // correct and best way - callbacks
-
-const baseURL = "https://ci-swapi.herokuapp.com/api/";
-function getData(type, cb) {
+function getData(url, cb) {
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = function () {
@@ -10,7 +8,7 @@ function getData(type, cb) {
         }
     };
 
-    xhr.open("GET", baseURL + type + "/");
+    xhr.open("GET", url);
     xhr.send();
 }
 
@@ -25,12 +23,28 @@ function getTableHeaders(obj) {
 
 }
 
+function generatePaginationButtons(next, prev) {
+    if (next && prev) {
+        return `<button onclick="writeToDocument('${prev}')">Previous</button>
+                <button onclick="writeToDocument('${next}')">Next</button>`;
+    } else if (next && !prev) {
+        return `<button onclick="writeToDocument('${next}')">Next</button>`;
+    } else if (!next && prev) {
+        return `<button onclick="writeToDocument('${prev}')">Previous</button>`;
+    }
+}
+
 // caling the function to write to the document, the type ie: people, film, starships etc
-function writeToDocument(type) {
+function writeToDocument(url) {
     var el =document.getElementById("data");
     el.innerHTML = "";
 
-    getData(type, function(data) {
+    getData(url, function(data) {
+
+        if (data.next || data.previous) {
+            pagination = generatePaginationButtons(data.next, data.previous)
+        }
+
         var tableRows = [];
        // console.dir(data); - removed and overwritten
         data = data.results;
@@ -48,7 +62,7 @@ function writeToDocument(type) {
             // el.innerHTML += "<p>" + item.name + "</p>";
         });
 
-        el.innerHTML = `<table>${tableHeaders}${tableRows}</table>`;
+        el.innerHTML = `<table>${tableHeaders}${tableRows}</table>${pagination}`;
         // document.getElementById("data").innerHTML = data.results; - cut and used in forEach loop.
     });
 }
